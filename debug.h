@@ -24,12 +24,9 @@
 #include <errno.h>
 #include <string.h>
 
-#define log_err(M, ...) fprintf(stderr, "[ERR] %s | %s | %s | " M "\n", __DATE__, __TIME__, ##__VA_ARGS__)
-#define log_wrn(M, ...) fprintf(stderr, "[WRN] %s | %s | %s | " M "\n", __DATE__, __TIME__, ##__VA_ARGS__)
-#define log_inf(M, ...) fprintf(stderr, "[INF] %s | %s | %s | " M "\n", __DATE__, __TIME__, ##__VA_ARGS__)
-
-//#define log_warn(M, ...) fprintf(stderr, "[WARN] (%s:%d) " M "\n", __FILE__, __LINE__, ##__VA_ARGS__)
-
-//#define log_info(M, ...) fprintf(stderr, "[INFO] (%s:%d) " M "\n", __FILE__, __LINE__, ##__VA_ARGS__)
+#define log_err(M, ...) fprintf(stderr, "[ERR] %s | %s | %s | " M "\n", __DATE__, __TIME__, __FUNCTION__, ##__VA_ARGS__)
+#define log_wrn(M, ...) fprintf(stderr, "[WRN] %s | %s | %s | " M "\n", __DATE__, __TIME__, __FUNCTION__, ##__VA_ARGS__)
+#define log_inf(M, ...) fprintf(stderr, "[INF] %s | %s | %s | " M "\n", __DATE__, __TIME__, __FUNCTION__, ##__VA_ARGS__)
+#define log_dbg(M, ...) fprintf(stderr, "[DBG] %s | %s | %s | " M "\n", __DATE__, __TIME__, __FUNCTION__, ##__VA_ARGS__)
 
 #endif
