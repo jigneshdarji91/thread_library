@@ -24,53 +24,78 @@
 #include <malloc.h>
 #include "debug.h"
 
+//Used for testing
+//typedef int thread_t;
+
 typedef struct thread_node_t {
     thread_t t;
-    thread_t *next;
-    thread_t *prev;
+    struct thread_node_t* next;
+    struct thread_node_t* prev;
 } thread_node_t;
 
-typedef struct thread_queue_t {
-    thread_t *head;
-    thread_t *tail;
+typedef struct queue_t {
+    thread_node_t *head;
+    thread_node_t *tail;
     unsigned int size;
     //TODO: Add a semaphore
 
-} thread_queue_t;
+} queue_t;
 
-void queue_enq(thread_queue_t &q, thread_t &t)
+void queue_init(struct queue_t *q)
 {
-    log_dbg("begin");
-    thread_node_t new_t = (thread_node_t *)malloc(sizeof(thread_node_t));
-    new_t = &t;
-    new_t.next = NULL;
-    new_t.prev = tail;
-    tail->next = new_t;
-    q.size++;
+    q->head = NULL;
+    q->tail = NULL;
+}
+
+void queue_enq(struct queue_t *q, thread_t *t)
+{
+    log_dbg("begin size:%d", q->size);
+    thread_node_t *new_t = (thread_node_t *)malloc(sizeof(thread_node_t));
+    new_t->t = *t;
+    new_t->next = NULL;
+    new_t->prev = q->tail;
+    if(q->size == 0)
+    {
+        q->head = new_t;
+    }
+    else 
+    {
+        q->tail->next = new_t;
+    }
+    q->tail = new_t;
+    q->size++;
     log_dbg("end");
 }
 
-void queue_deq(thread_queue_t &q, thread_t &t)
+void queue_deq(queue_t *q, thread_t *t)
 {
-    log_dbg("begin");
-    if(q.size < 1)
+    log_dbg("begin size:%d", q->size);
+    if(q->size < 1)
     {
         log_wrn("Queue is empty");
         return;
     }
 
-    t = head->t;
-    head = head->next;
-    q.size--;
+    *t = q->head->t;
+    log_inf("value: %d", *t);
+    if(q->size > 1)
+        q->head = q->head->next;
+    else
+    {
+        q->head = NULL;
+        q->tail = NULL;
+    }
+    //q->head->prev = NULL;
+    q->size--;
     log_dbg("end");
 }
 
-int queue_size(thread_queue_t &q)
+int queue_size(queue_t *q)
 {
-    log_dbg("size: %d", q.size);
-    return q.size;   
+    log_dbg("size: %d", q->size);
+    return q->size;   
 }
 
 
-#endif QUEUE_H
+#endif /*QUEUE_H*/
 
