@@ -30,4 +30,9 @@ struct semaphore_t
     struct queue_t*     using_q;
 };
 
+semaphore_t     semaphore_init(int value);
+void            semaphore_signal(semaphore_t sem);
+void            semaphore_wait(semaphore_t sem);
+int             semaphore_destroy(semaphore_t sem);
+
 #endif /*SEMAPHORE_H*/
