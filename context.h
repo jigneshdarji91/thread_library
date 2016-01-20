@@ -23,18 +23,18 @@
 #include "debug.h"
 #include "thread.h"
 
-static void context_make(ucontext_t *t, void (*func)(void*), void *args, unsigned int stack_size)
+static void context_make(ucontext_t *t, void (*func)(void), void *args, unsigned int stack_size)
 {
     log_inf("creating a context with stack size: %d", stack_size);
     
     getcontext(t);
     
-    t->uc_link              = link;
+    t->uc_link              = 0;
     t->uc_stack.ss_sp       = malloc(stack_size);
     t->uc_stack.ss_size     = stack_size;
     t->uc_stack.ss_flags    = 0;
     
-    makecontext(t, (void *) &func, (void *) &args);
+    makecontext(t, func, 1, args);
     log_inf("end");
 }
 

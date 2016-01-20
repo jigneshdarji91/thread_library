@@ -1,14 +1,33 @@
-#define "debug.h"
-#define "queue.h"
+/*
+ * =====================================================================================
+ *
+ *       Filename:  semaphore.h
+ *
+ *    Description:  semaphore library
+ *
+ *        Version:  1.0
+ *        Created:  01/09/2016 10:32:44 AM
+ *       Revision:  none
+ *       Compiler:  gcc
+ *
+ *         Author:  Jignesh Darji (jignesh), jndarji@ncsu.edu
+ *   Organization:  North Carolina State University
+ *
+ * =====================================================================================
+ */
+#ifndef SEMAPHORE_H
+#define SEMAPHORE_H
 
-typedef struct semaphore_t
+#include "debug.h"
+#include "queue.h"
+
+typedef struct semaphore_t semaphore_t;
+
+struct semaphore_t
 {
-    int value;
-    queue_t* waiting_q;
-    queue_t* using_q;
-} semaphore_t;
+    int                 value;
+    struct queue_t*     waiting_q;
+    struct queue_t*     using_q;
+};
 
-MySemaphore MySemaphoreInit(int initialValue);
-void MySemaphoreSignal(MySemaphore sem);
-void MySemaphoreWait(MySemaphore sem);
-int MySemaphoreDestroy(MySemaphore sem);
+#endif /*SEMAPHORE_H*/
