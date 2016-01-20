@@ -23,15 +23,10 @@
 #include <stdio.h>
 #include <malloc.h>
 #include "debug.h"
+#include "thread.h"
 
 //Used for testing
 //typedef int thread_t;
-
-typedef struct thread_node_t {
-    thread_t t;
-    struct thread_node_t* next;
-    struct thread_node_t* prev;
-} thread_node_t;
 
 typedef struct queue_t {
     thread_node_t *head;
