@@ -1,28 +1,21 @@
-enum MyThreadState
-{
-    THREAD_READY = 0,   /*ready  */
-    THREAD_RUNNING,     /*running*/
-    THREAD_WAIT         /*waiting*/
-}
+#include "ucontext.h"
+#include "mythread.h"
+#include "thread.h"
+#include "semaphore.h"
+#include "debug.h"
+#include "queue.h"
 
-typedef struct MyThread
-{
-    //needs a context, state, next pointer, and child pointer
-    //http://www.gnu.org/software/libc/manual/html_node/System-V-contexts.html    
-    
-    MyThread* next;
-    MyThread* prev;
-    MyThread* children;
-    MyThread* parent;
+thread_t *main_th;
+thread_t *init_th;
 
-    MyThreadState state;
+thread_t *active_th;
+queue_t *ready_q;
+queue_t *block_q;
 
-    MySemaphore *semaphore;
-
-} MyThread;
 
 MyThread MyThreadCreate (void(*start_funct)(void *), void *args);
+void MyThreadExit(void);
+
 void MyThreadYield(void);
 int MyThreadJoin(MyThread thread);
 void MyThreadJoinAll(void);
-void MyThreadExit(void);
