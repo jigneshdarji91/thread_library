@@ -1,0 +1,97 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+CONTEXT_H	context.h	20;"	d
+FAILURE	mythread.c	/^const int FAILURE       = -1;$/;"	v
+MYTHREAD_H	mythread.h	15;"	d
+MySemaphore	mythread.h	/^typedef void *MySemaphore;$/;"	t
+MySemaphoreDestroy	mythread.c	/^int MySemaphoreDestroy(MySemaphore sem)$/;"	f
+MySemaphoreInit	mythread.c	/^MySemaphore MySemaphoreInit(int initialValue)$/;"	f
+MySemaphoreSignal	mythread.c	/^void MySemaphoreSignal(MySemaphore sem)$/;"	f
+MySemaphoreWait	mythread.c	/^void MySemaphoreWait(MySemaphore sem)$/;"	f
+MyThread	mythread.h	/^typedef void *MyThread;$/;"	t
+MyThread	practice/threading.c	/^typedef struct MyThread $/;"	s	file:
+MyThread	practice/threading.c	/^} MyThread;$/;"	t	typeref:struct:MyThread	file:
+MyThreadCreate	mythread.c	/^MyThread MyThreadCreate (void(*start_funct)(void *), void *args)$/;"	f
+MyThreadCreate	practice/threading.c	/^MyThread MyThreadCreate (void(*start_funct)(void *), void *args)$/;"	f
+MyThreadExit	mythread.c	/^void MyThreadExit(void)$/;"	f
+MyThreadInit	mythread.c	/^void MyThreadInit(void(*start_funct)(void *), void *args)$/;"	f
+MyThreadJoin	mythread.c	/^int MyThreadJoin(MyThread thread)$/;"	f
+MyThreadJoinAll	mythread.c	/^void MyThreadJoinAll(void)$/;"	f
+MyThreadYield	mythread.c	/^void MyThreadYield(void)$/;"	f
+QUEUE_H	queue.h	20;"	d
+SEMAPHORE_H	semaphore.h	19;"	d
+STACK_SIZE	mythread.c	/^const int STACK_SIZE    = 8000; \/\/FIXME: stack size round off$/;"	v
+STACK_SIZE	practice/threading.c	23;"	d	file:
+SUCCESS	mythread.c	/^const int SUCCESS       = 0;$/;"	v
+THREAD_H	thread.h	20;"	d
+THREAD_STATE_BLOCKED	thread.h	/^    THREAD_STATE_BLOCKED         \/*waiting*\/$/;"	e	enum:thread_state_t
+THREAD_STATE_READY	thread.h	/^    THREAD_STATE_READY = 0,   \/*ready  *\/$/;"	e	enum:thread_state_t
+THREAD_STATE_RUNNING	thread.h	/^    THREAD_STATE_RUNNING,     \/*running*\/$/;"	e	enum:thread_state_t
+__dbg_h__	debug.h	21;"	d
+activeq	mythread.c	/^queue_t     *activeq;$/;"	v
+block_q	mythread.c	/^queue_t     *block_q;$/;"	v
+blockq	thread.h	/^    struct queue_t          *blockq;$/;"	m	struct:thread_t	typeref:struct:thread_t::queue_t
+childq	thread.h	/^    struct queue_t          *childq;$/;"	m	struct:thread_t	typeref:struct:thread_t::queue_t
+context	practice/threading.c	/^    ucontext_t context;$/;"	m	struct:MyThread	file:
+context	thread.h	/^    ucontext_t              context;$/;"	m	struct:thread_t
+context_make	context.h	/^static void context_make(ucontext_t *t, void (*func)(void), void *args, unsigned int stack_size)$/;"	f
+context_swap	context.h	/^static void context_swap(ucontext_t *prev, ucontext_t *next)$/;"	f
+fibonacci	practice/threading.c	/^void fibonacci(int n)$/;"	f
+head	queue.h	/^    struct thread_node_t *head;$/;"	m	struct:queue_t	typeref:struct:queue_t::thread_node_t
+hello_world	practice/threading.c	/^void hello_world()$/;"	f
+init_th	mythread.c	/^thread_t    *init_th;$/;"	v
+log_dbg	debug.h	30;"	d
+log_err	debug.h	27;"	d
+log_inf	debug.h	29;"	d
+log_wrn	debug.h	28;"	d
+main	practice/threading.c	/^int main()$/;"	f
+main	test_logging.c	/^int main()$/;"	f
+main	test_queue.c	/^int main()$/;"	f
+main_th	mythread.c	/^thread_t    *main_th;$/;"	v
+next	thread.h	/^    struct thread_node_t    *next;$/;"	m	struct:thread_node_t	typeref:struct:thread_node_t::thread_node_t
+parent	thread.h	/^    struct thread_t         *parent;$/;"	m	struct:thread_t	typeref:struct:thread_t::thread_t
+prev	thread.h	/^    struct thread_node_t    *prev;$/;"	m	struct:thread_node_t	typeref:struct:thread_node_t::thread_node_t
+queue_del	queue.c	/^void    queue_del(queue_t *q, thread_t *t)$/;"	f
+queue_deq	queue.c	/^void queue_deq(queue_t *q, thread_t *t)$/;"	f
+queue_enq	queue.c	/^void queue_enq(queue_t *q, thread_t *t)$/;"	f
+queue_init	queue.c	/^void queue_init(struct queue_t *q)$/;"	f
+queue_is_present	queue.c	/^int     queue_is_present(queue_t *q, thread_t *t)$/;"	f
+queue_size	queue.c	/^int queue_size(queue_t *q)$/;"	f
+queue_t	queue.h	/^struct queue_t {$/;"	s
+queue_t	queue.h	/^typedef struct queue_t          queue_t;$/;"	t	typeref:struct:queue_t
+ready_q	mythread.c	/^queue_t     *ready_q;$/;"	v
+s_id_gen	thread.h	/^static unsigned int s_id_gen = 1;$/;"	v
+sem	thread.h	/^    struct semaphore_t      *sem;$/;"	m	struct:thread_t	typeref:struct:thread_t::semaphore_t
+semaphore_destroy	semaphore.c	/^int semaphore_destroy(semaphore_t sem)$/;"	f
+semaphore_init	semaphore.c	/^semaphore_t semaphore_init(int value)$/;"	f
+semaphore_signal	semaphore.c	/^void semaphore_signal(semaphore_t sem)$/;"	f
+semaphore_t	semaphore.h	/^struct semaphore_t$/;"	s
+semaphore_t	semaphore.h	/^typedef struct semaphore_t semaphore_t;$/;"	t	typeref:struct:semaphore_t
+semaphore_wait	semaphore.c	/^void semaphore_wait(semaphore_t sem)$/;"	f
+size	queue.h	/^    unsigned int size;$/;"	m	struct:queue_t
+state	thread.h	/^    enum thread_state_t     state;$/;"	m	struct:thread_t	typeref:enum:thread_t::thread_state_t
+t	thread.h	/^    struct thread_t         *t;$/;"	m	struct:thread_node_t	typeref:struct:thread_node_t::thread_t
+tail	queue.h	/^    struct thread_node_t *tail;$/;"	m	struct:queue_t	typeref:struct:queue_t::thread_node_t
+thread_create	thread.c	/^thread_t* thread_create(thread_t *parent, void (*func)(void), void *args, unsigned int stack_size)$/;"	f
+thread_exit	thread.c	/^void thread_exit(thread_t *t)$/;"	f
+thread_join	thread.c	/^int thread_join(thread_t *parent, thread_t *child)$/;"	f
+thread_join_all	thread.c	/^void thread_join_all(thread_t *t)$/;"	f
+thread_node_t	queue.h	/^typedef struct thread_node_t    thread_node_t;$/;"	t	typeref:struct:thread_node_t
+thread_node_t	thread.h	/^struct thread_node_t $/;"	s
+thread_node_t	thread.h	/^typedef struct  thread_node_t   thread_node_t;$/;"	t	typeref:struct:thread_node_t
+thread_state_t	thread.h	/^enum thread_state_t$/;"	g
+thread_state_t	thread.h	/^typedef enum    thread_state_t  thread_state_t;$/;"	t	typeref:enum:thread_state_t
+thread_status_update	thread.c	/^void thread_status_update(thread_t *t)$/;"	f
+thread_switch	thread.c	/^void thread_switch(thread_t *active, thread_t *next)$/;"	f
+thread_t	queue.h	/^typedef struct thread_t         thread_t;$/;"	t	typeref:struct:thread_t
+thread_t	thread.h	/^struct thread_t$/;"	s
+thread_t	thread.h	/^typedef struct  thread_t        thread_t;$/;"	t	typeref:struct:thread_t
+thread_yield	thread.c	/^void thread_yield(thread_t *t)$/;"	f
+tid	thread.h	/^    unsigned int            tid;$/;"	m	struct:thread_t
+using_q	semaphore.h	/^    struct queue_t*     using_q;$/;"	m	struct:semaphore_t	typeref:struct:semaphore_t::queue_t
+value	semaphore.h	/^    int                 value;$/;"	m	struct:semaphore_t
+waiting_q	semaphore.h	/^    struct queue_t*     waiting_q;$/;"	m	struct:semaphore_t	typeref:struct:semaphore_t::queue_t
