@@ -26,11 +26,11 @@ void queue_init(struct queue_t *q)
     q->size = 0;
 }
 
-void queue_enq(queue_t *q, thread_t *t)
+void queue_enq(queue_t *q, thread_t **t)
 {
-    log_dbg("begin tid: %d qsize:%d", t->tid, q->size);
+    //log_dbg("begin tid: %d qsize:%d", t->tid, q->size);
     thread_node_t *new_t = (thread_node_t *)malloc(sizeof(thread_node_t));
-    new_t->t = t;
+    new_t->t = *t;
     new_t->next = NULL;
     new_t->prev = q->tail;
     if(q->size == 0)
@@ -45,7 +45,7 @@ void queue_enq(queue_t *q, thread_t *t)
     q->tail = new_t;
     q->size++;
     queue_print(q);
-    log_dbg("end");
+    //log_dbg("end");
 }
 
 void    queue_deq(queue_t *q, thread_t **t)
@@ -59,7 +59,8 @@ void    queue_deq(queue_t *q, thread_t **t)
         return;
     }
 
-    *t = q->head->t;
+    thread_node_t *temp = q->head;
+    *t = temp->t;
     if(q->size > 1)
     {
         q->head         = q->head->next;
@@ -71,61 +72,69 @@ void    queue_deq(queue_t *q, thread_t **t)
         q->tail = NULL;
     }
     //q->head->prev = NULL;
+    free(temp);
     q->size--;
     log_dbg("end tid: %d", (*t)->tid);
 }
 
-void    queue_del(queue_t *q, thread_t *t)
+void    queue_del(queue_t *q, thread_t **t)
 {
+    log_dbg("begin");
     int found = 0; 
     thread_node_t* temp = q->head;
-    while(temp != NULL)
+    if(q->size > 0)
     {
-        if(temp->t->tid == t->tid)
+        while(temp != NULL && temp->t != NULL && t != NULL)
         {
-            log_inf("thread removed");
-            found = 1;
-            temp->prev->next = temp->next;
-            temp->next->prev = temp->prev;
-            free(temp);
-            q->size--;
-            break;
+            if(temp->t->tid == (*t)->tid)
+            {
+                log_inf("thread removed");
+                found = 1;
+                if(temp->prev != NULL)
+                    temp->prev->next = temp->next;
+                if(temp->next != NULL)
+                    temp->next->prev = temp->prev;
+                free(temp);
+                q->size--;
+                break;
+            }
+            temp = temp->next;
         }
-        temp = temp->next;
     }
-    
-    log_dbg("tid: %d deleted: %d", t->tid, found);
+    log_dbg("end tid: %d deleted: %d", (*t)->tid, found);
     return;
 }
 
-int     queue_is_present(queue_t *q, thread_t *t)
+int     queue_is_present(queue_t *q, thread_t **t)
 {
     int found = 0;
     thread_node_t* temp = q->head;
-    while(temp != NULL)
+    if(q->size > 0)
     {
-        if(temp->t->tid == t->tid)
+        while(temp != NULL && temp->t != NULL && t != NULL)
         {
-            found = 1;
-            break;
+            if(temp->t->tid == (*t)->tid)
+            {
+                found = 1;
+                break;
+            }
+            temp = temp->next;
         }
-        temp = temp->next;
     }
-    
-    log_dbg("tid: %d found: %d", t->tid, found);
+    log_dbg("tid: %d found: %d", (*t)->tid, found);
     return found;
 }
 
 void queue_print(queue_t *q)
 {
-    log_dbg("begin");
+    //log_dbg("begin");
     thread_node_t* temp = q->head;
     while(temp != NULL)
     {
-        log_inf("tid: %d", temp->t->tid);
+        //log_inf("tid: %d", temp->t->tid);
         temp = temp->next;
     }
-    log_dbg("end");
+    //log_dbg("end");
 }
 
 int queue_size(queue_t *q)

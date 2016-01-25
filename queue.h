@@ -33,10 +33,10 @@ struct queue_t {
 };
 
 void    queue_init(struct queue_t *q);
-void    queue_enq(struct queue_t *q, thread_t *t);
+void    queue_enq(struct queue_t *q, thread_t **t);
 void    queue_deq(queue_t *q, thread_t **t);
-void    queue_del(queue_t *q, thread_t *t);
-int     queue_is_present(queue_t *q, thread_t *t);
+void    queue_del(queue_t *q, thread_t **t);
+int     queue_is_present(queue_t *q, thread_t **t);
 void    queue_print(queue_t *q);
 int     queue_size(queue_t *q);
 

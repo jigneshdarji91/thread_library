@@ -55,7 +55,10 @@ struct thread_node_t
 
 static unsigned int s_id_gen = 1;
 
-thread_t*   thread_create(thread_t *parent, void (*func)(void), void *args, unsigned int stack_size);
+thread_t*   thread_create(thread_t *parent,
+                            void (*func)(void), 
+                            void *args, 
+                            unsigned int stack_size);
 void        thread_exit(thread_t* /*t*/);
 void        thread_status_update(thread_t *t);
 void        thread_yield(thread_t* /*t*/);

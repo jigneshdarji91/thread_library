@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "mythread.h"
+#include "../mythread.h"
 
 int mode = 0;
 
@@ -12,14 +12,18 @@ void t0(void * n)
 
   int n2 = n1 -1 ;
   if (n1 > 0) {
-    printf("t0 create\n");
+    printf("t0 create %d\n", n2);
     T = MyThreadCreate(t0, (void *)n2);
     if (mode == 1)
-      MyThreadYield();
+    {
+        printf("t0 yield %d\n", n1);
+        MyThreadYield();
+    }
     else if (mode == 2)
       MyThreadJoin(T);
+    printf("t0 continue %d\n", n1);
   }
-  printf("t0 end\n");
+  printf("t0 end %d\n", n1);
   MyThreadExit();
 }
 
