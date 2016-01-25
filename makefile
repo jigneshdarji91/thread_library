@@ -17,5 +17,13 @@ passing: $(TEST_DIR)/passing.c $(FILES)
 tree: $(TEST_DIR)/tree.c $(FILES)
 	$(CC) $(CFLAGS) -o tree.o $(TEST_DIR)/tree.c $(FILES) 
 
+library: libmythread.a
+	$(CC) $(CFLAGS) -c queue.c
+	$(CC) $(CFLAGS) -c context.c
+	$(CC) $(CFLAGS) -c thread.c
+	$(CC) $(CFLAGS) -c semaphore.c
+	$(CC) $(CFLAGS) -c mythread.c
+	ar -cvq libmythread.a queue.o context.o thread.o semaphore.o mythread.o
+
 clean:
 	rm -f *.o
