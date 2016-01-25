@@ -21,7 +21,8 @@
 
 #include <ucontext.h>
 
-void context_make(ucontext_t *t, void (*func)(void), void *args, unsigned int stack_size);
-void context_swap(ucontext_t *prev, ucontext_t *next);
+void context_make(ucontext_t* /* t*/, void (*func)(void), void* /*args*/, unsigned int /* stack_size*/);
+void context_swap(ucontext_t* /* prev*/, ucontext_t* /* next*/);
+void context_set(ucontext_t* /*new_context*/);
 
 #endif /*CONTEXT_H*/

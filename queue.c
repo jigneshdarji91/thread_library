@@ -95,6 +95,7 @@ void    queue_del(queue_t *q, thread_t **t)
                 if(temp->next != NULL)
                     temp->next->prev = temp->prev;
                 free(temp);
+                temp = NULL;
                 q->size--;
                 break;
             }
@@ -127,14 +128,13 @@ int     queue_is_present(queue_t *q, thread_t **t)
 
 void queue_print(queue_t *q)
 {
-    //log_dbg("begin");
+    log_dbg("begin");
     thread_node_t* temp = q->head;
-    while(temp != NULL)
+    while(temp != NULL && temp->t != NULL)
     {
-        //log_inf("tid: %d", temp->t->tid);
+        log_inf("tid: %d", temp->t->tid);
         temp = temp->next;
     }
-    //log_dbg("end");
 }
 
 int queue_size(queue_t *q)
@@ -143,3 +143,18 @@ int queue_size(queue_t *q)
     return q->size;   
 }
 
+void queue_free(queue_t *q)
+{
+    log_dbg("freeing queue memory");
+    thread_node_t* itr = q->head;
+    thread_node_t* temp = itr;
+    while(temp != NULL)
+    {
+        temp = temp->next;
+        free(itr->t->context.uc_stack.ss_sp);
+        free(itr->t);
+        itr->t = NULL;
+        free(itr);
+        itr = temp;
+    }
+}

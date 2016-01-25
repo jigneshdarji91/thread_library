@@ -13,7 +13,7 @@ queue_t     *active_q;
 queue_t     *ready_q;
 queue_t     *block_q;
 
-const int STACK_SIZE    = 8128; //FIXME: stack size round off
+const int STACK_SIZE    = 8000; //FIXME: stack size round off
 
 const int SUCCESS       = 0;
 const int FAILURE       = -1;
@@ -82,6 +82,7 @@ void MyThreadExit(void)
         log_inf("parent is NULL for tid: %d", exit_th->tid);
     
     log_inf("exiting tid: %d", exit_th->tid);
+    thread_exit_update_parent(exit_th);
     thread_exit(exit_th);
 
     //parent's state
@@ -110,9 +111,16 @@ void MyThreadExit(void)
     {
         log_inf("outgoing_tid: %d incoming_tid: %d", exit_th->tid, new_active_th->tid);
         queue_enq(active_q, &new_active_th);
-        thread_switch(exit_th, new_active_th);
+        thread_run(new_active_th);
     }
-
+    else
+    {
+        /* 
+        queue_free(active_q);
+        queue_free(block_q);
+        queue_free(ready_q);
+        */
+    }
     log_dbg("end");
     return;
 }

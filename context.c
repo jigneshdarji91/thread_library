@@ -42,3 +42,10 @@ void context_swap(ucontext_t *prev, ucontext_t *next)
     log_inf("end");
 }
 
+void context_set(ucontext_t *new_context)
+{
+    log_inf("begin");
+    setcontext(new_context);
+    log_inf("end");
+}
+

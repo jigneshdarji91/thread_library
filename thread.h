@@ -59,12 +59,14 @@ thread_t*   thread_create(thread_t *parent,
                             void (*func)(void), 
                             void *args, 
                             unsigned int stack_size);
+void        thread_exit_update_parent(thread_t* /*t*/);
 void        thread_exit(thread_t* /*t*/);
 void        thread_status_update(thread_t *t);
 void        thread_yield(thread_t* /*t*/);
 int         thread_join(thread_t *parent, thread_t *child);
 void        thread_join_all(thread_t *t);
 void        thread_switch(thread_t *active, thread_t *next);
+void        thread_run(thread_t *next);
 
 #endif /*THREAD_H*/
 

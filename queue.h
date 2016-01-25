@@ -39,6 +39,7 @@ void    queue_del(queue_t *q, thread_t **t);
 int     queue_is_present(queue_t *q, thread_t **t);
 void    queue_print(queue_t *q);
 int     queue_size(queue_t *q);
+void    queue_free(queue_t *q);
 
 #endif /*QUEUE_H*/
 

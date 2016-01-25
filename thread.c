@@ -56,6 +56,15 @@ thread_t* thread_create(thread_t *parent, void (*func)(void), void *args, unsign
 
 void thread_exit(thread_t *t)
 {
+    log_inf("freeing resources");
+    free(t->context.uc_stack.ss_sp);
+    free(t->childq);
+    free(t->blockq);
+    free(t);
+}
+
+void thread_exit_update_parent(thread_t *t)
+{
     log_inf("begin tid:%d", t->tid);   
     if(t == NULL)
         return;
@@ -85,12 +94,6 @@ void thread_exit(thread_t *t)
         log_wrn("parent thread is dead");
     }
     
-    /*
-    free(t->context.uc_stack.ss_sp);
-    free(t->childq);
-    free(t->blockq);
-    free(t);
-    */
     log_inf("end");
 }
 
@@ -153,3 +156,9 @@ void thread_switch(thread_t *active, thread_t *next)
     log_inf("end");
 }
 
+void thread_run(thread_t *next)
+{
+    log_inf("begin next_tid: %d", next->tid);
+    context_set(&next->context);
+    log_inf("end");
+}
