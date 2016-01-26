@@ -34,3 +34,6 @@
 
 #log
 *.log
+
+#tags
+tags
