@@ -24,6 +24,7 @@ library: libmythread.a
 	$(CC) $(CFLAGS) -c semaphore.c
 	$(CC) $(CFLAGS) -c mythread.c
 	ar -cvq libmythread.a queue.o context.o thread.o semaphore.o mythread.o
+	rm queue.o context.o thread.o semaphore.o mythread.o
 
 clean:
 	rm -f *.o
