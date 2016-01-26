@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -g -O0
 INCLUDE_DIR = include/
-TEST_DIR = test_cases
+TEST_DIR = test
 SRC_DIR = src
 LIB_DIR = lib
 FILES = $(SRC_DIR)/context.c $(SRC_DIR)/queue.c $(SRC_DIR)/thread.c $(SRC_DIR)/semaphore.c $(SRC_DIR)/mythread.c
