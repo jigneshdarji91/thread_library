@@ -78,6 +78,8 @@ void thread_exit_update_parent(thread_t *t)
             queue_del(t->parent->childq, &t);
             thread_status_update(t->parent);
         }
+        else
+            log_err("tid: %d not present in parent's childq", t->tid);
 
         //Delete from the blockq
         if(queue_is_present(t->parent->blockq, &t))

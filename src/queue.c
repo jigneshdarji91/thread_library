@@ -88,7 +88,7 @@ void    queue_del(queue_t *q, thread_t **t)
         {
             if(temp->t->tid == (*t)->tid)
             {
-                log_inf("thread removed");
+                log_inf("thread: %d removed", (*t)->tid);
                 found = 1;
                 if(temp->prev != NULL)
                     temp->prev->next = temp->next;
@@ -110,9 +110,9 @@ int     queue_is_present(queue_t *q, thread_t **t)
 {
     int found = 0;
     thread_node_t* temp = q->head;
-    if(q->size > 0)
+    if(q->size > 0 && t != NULL && (*t)->tid > 0)
     {
-        while(temp != NULL && temp->t != NULL && t != NULL)
+        while(temp != NULL && temp->t != NULL && temp->t->tid > 0)
         {
             if(temp->t->tid == (*t)->tid)
             {

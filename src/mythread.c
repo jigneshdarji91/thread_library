@@ -70,6 +70,15 @@ void MyThreadExit(void)
     thread_t *exit_th = NULL, *parent_th = NULL, *new_active_th = NULL;
     thread_state_t parent_old_state;
 
+    if(active_q->head->t->tid == main_th->tid)
+    {
+        log_dbg("main thread is exiting");
+        if(queue_size(ready_q) > 0)
+        {
+            log_dbg("main thread is exiting while other threads exit");
+            MyThreadJoinAll();
+        }
+    }
     queue_deq(active_q, &exit_th);
 
     parent_th = exit_th->parent; 
@@ -112,14 +121,6 @@ void MyThreadExit(void)
         log_inf("outgoing_tid: %d incoming_tid: %d", exit_th->tid, new_active_th->tid);
         queue_enq(active_q, &new_active_th);
         thread_run(new_active_th);
-    }
-    else
-    {
-        /* 
-        queue_free(active_q);
-        queue_free(block_q);
-        queue_free(ready_q);
-        */
     }
     log_dbg("end");
     return;
