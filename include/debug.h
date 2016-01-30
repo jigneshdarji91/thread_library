@@ -25,9 +25,9 @@
 #include <string.h>
 
 #define DEBUGGING_MODE 0 
-#define log_err(M, ...) if(DEBUGGING_MODE) fprintf(stderr, "[ERR] %s | %s | %-15s | " M "\n", __DATE__, __TIME__, __FUNCTION__, ##__VA_ARGS__)
-#define log_wrn(M, ...) if(DEBUGGING_MODE) fprintf(stderr, "[WRN] %s | %s | %-15s | " M "\n", __DATE__, __TIME__, __FUNCTION__, ##__VA_ARGS__)
-#define log_inf(M, ...) if(DEBUGGING_MODE) fprintf(stderr, "[INF] %s | %s | %-15s | " M "\n", __DATE__, __TIME__, __FUNCTION__, ##__VA_ARGS__)
-#define log_dbg(M, ...) if(DEBUGGING_MODE) fprintf(stderr, "[DBG] %s | %s | %-15s | " M "\n", __DATE__, __TIME__, __FUNCTION__, ##__VA_ARGS__)
+#define log_err(M, ...) if(DEBUGGING_MODE) fprintf(stdout, "[ERR] %s | %s | %-15s | " M "\n", __DATE__, __TIME__, __FUNCTION__, ##__VA_ARGS__)
+#define log_wrn(M, ...) if(DEBUGGING_MODE) fprintf(stdout, "[WRN] %s | %s | %-15s | " M "\n", __DATE__, __TIME__, __FUNCTION__, ##__VA_ARGS__)
+#define log_inf(M, ...) if(DEBUGGING_MODE) fprintf(stdout, "[INF] %s | %s | %-15s | " M "\n", __DATE__, __TIME__, __FUNCTION__, ##__VA_ARGS__)
+#define log_dbg(M, ...) if(DEBUGGING_MODE) fprintf(stdout, "[DBG] %s | %s | %-15s | " M "\n", __DATE__, __TIME__, __FUNCTION__, ##__VA_ARGS__)
 
 #endif

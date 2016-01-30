@@ -128,12 +128,16 @@ int     queue_is_present(queue_t *q, thread_t **t)
 
 void queue_print(queue_t *q)
 {
-    log_dbg("begin");
-    thread_node_t* temp = q->head;
-    while(temp != NULL && temp->t != NULL)
+    log_dbg("begin size: %d", q->size);
+    thread_node_t* temp = NULL;
+    temp = q->head;
+    if(q->size > 0)
     {
-        log_inf("tid: %d", temp->t->tid);
-        temp = temp->next;
+        while(temp != NULL && temp->t != NULL && temp->t->tid > 0)
+        {
+            log_inf("tid: %d", temp->t->tid);
+            temp = temp->next;
+        }
     }
 }
 

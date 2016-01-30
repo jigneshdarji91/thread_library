@@ -81,6 +81,8 @@ void thread_exit_update_parent(thread_t *t)
         else
             log_err("tid: %d not present in parent's childq", t->tid);
 
+        log_inf("printing parent tid: %d's blockq", t->parent->tid);
+        queue_print(t->parent->blockq);
         //Delete from the blockq
         if(queue_is_present(t->parent->blockq, &t))
         {
@@ -122,16 +124,16 @@ void thread_yield(thread_t *t)
     log_inf("end");   
 }
 
-int thread_join(thread_t *parent, thread_t *child)
+int thread_join(thread_t *parent, thread_t **child)
 {
-    if(parent != NULL && child != NULL)
+    if(parent == NULL || *child == NULL)
     {
         log_err("NULL threads being sent");
         return -1;
     }
     //functionality for moving the active thread from running to blocking queue should be present in MyThread
-    log_inf("parent: %d child: %d", parent->tid, child->tid);
-    queue_enq(parent->blockq, &child);
+    log_inf("parent: %d child: %d", parent->tid, (*child)->tid);
+    queue_enq(parent->blockq, child);
     parent->state = THREAD_STATE_BLOCKED; 
     return 0;
 }

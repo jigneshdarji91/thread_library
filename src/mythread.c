@@ -70,7 +70,11 @@ void MyThreadExit(void)
     thread_t *exit_th = NULL, *parent_th = NULL, *new_active_th = NULL;
     thread_state_t parent_old_state;
 
-    if(active_q->head->t->tid == main_th->tid)
+    if(active_q != NULL &&
+        active_q->head != NULL &&
+        active_q->head->t != NULL &&
+        active_q->head->t->tid > 0 &&
+        active_q->head->t->tid == main_th->tid)
     {
         log_dbg("main thread is exiting");
         if(queue_size(ready_q) > 0)
@@ -80,6 +84,11 @@ void MyThreadExit(void)
         }
     }
     queue_deq(active_q, &exit_th);
+    if(exit_th == NULL)
+    {
+        log_err("active_q returned a NULL thread");
+        return;
+    }
 
     parent_th = exit_th->parent; 
     if(parent_th != NULL)
@@ -133,11 +142,13 @@ void MyThreadYield(void)
     queue_enq(ready_q, &exit_th);
     log_inf("exiting tid: %d", exit_th->tid);
     queue_deq(ready_q, &new_active_th);
-    if(new_active_th != NULL && new_active_th->tid > 1)
+    if(new_active_th != NULL && new_active_th->tid > 0)
     {
         queue_enq(active_q, &new_active_th);
         thread_switch(exit_th, new_active_th);
     }
+    else
+        log_err("should never come here, yield did not find a thread in the readyq");
     log_inf("end");
 }
 int MyThreadJoin(MyThread thread)
@@ -145,12 +156,13 @@ int MyThreadJoin(MyThread thread)
     log_inf("begin");
     thread_t *exit_th = NULL, *parent_th = NULL, *new_active_th = NULL;
     queue_deq(active_q, &exit_th);
-    thread_join(exit_th, (thread_t*)&thread);
+    thread_join(exit_th, (thread_t **)&thread);
     queue_enq(block_q, &exit_th);
     log_inf("exiting tid: %d", exit_th->tid);
     queue_deq(ready_q, &new_active_th);
     if(new_active_th != NULL && new_active_th->tid > 1)
     {
+        log_inf("yielding tid: %d and starting tid: %d", exit_th->tid, new_active_th->tid);
         queue_enq(active_q, &new_active_th);
         thread_switch(exit_th, new_active_th);
     }
