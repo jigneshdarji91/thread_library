@@ -5,6 +5,7 @@
 #include "thread.h"
 #include "queue.h"
 #include <malloc.h>
+#include <assert.h>
 
 thread_t    *main_th;
 thread_t    *init_th;
@@ -24,9 +25,9 @@ void MyThreadInit(void(*start_funct)(void *), void *args)
     init_th = thread_create(NULL, NULL, NULL, STACK_SIZE);
     main_th = thread_create(init_th, (void*)start_funct, args, STACK_SIZE);
 
-    active_q    = (queue_t *) malloc (sizeof(queue_t));
-    ready_q     = (queue_t *) malloc (sizeof(queue_t));
-    block_q     = (queue_t *) malloc (sizeof(queue_t));
+    active_q    = calloc (1, sizeof(queue_t));
+    ready_q     = calloc (1, sizeof(queue_t));
+    block_q     = calloc (1, sizeof(queue_t));
 
     queue_init(active_q);
     queue_init(ready_q);
@@ -34,6 +35,8 @@ void MyThreadInit(void(*start_funct)(void *), void *args)
 
     queue_enq(active_q, &main_th);
     thread_switch(init_th, main_th); 
+    thread_exit(init_th);
+    thread_exit(main_th);
     log_inf("end");
 }
 
@@ -70,10 +73,9 @@ void MyThreadExit(void)
     thread_t *exit_th = NULL, *parent_th = NULL, *new_active_th = NULL;
     thread_state_t parent_old_state;
 
-    if(active_q != NULL &&
-        active_q->head != NULL &&
-        active_q->head->t != NULL &&
-        active_q->head->t->tid > 0 &&
+    assert(active_q);
+    assert(active_q->head);
+    if(active_q->head->t->tid > 0 &&
         active_q->head->t->tid == main_th->tid)
     {
         log_dbg("main thread is exiting");
@@ -91,16 +93,16 @@ void MyThreadExit(void)
     }
 
     parent_th = exit_th->parent; 
-    if(parent_th != NULL)
+    if(parent_th != NULL && parent_th->tid > 0)
     {
         log_inf("parent tid: %d for tid: %d", parent_th->tid, exit_th->tid);
         parent_old_state = parent_th->state;
+        thread_exit_update_parent(exit_th);
     }
     else
         log_inf("parent is NULL for tid: %d", exit_th->tid);
     
     log_inf("exiting tid: %d", exit_th->tid);
-    thread_exit_update_parent(exit_th);
     thread_exit(exit_th);
 
     //parent's state
@@ -127,13 +129,14 @@ void MyThreadExit(void)
     queue_deq(ready_q, &new_active_th);
     if(new_active_th != NULL && new_active_th->tid > 1)
     {
-        log_inf("outgoing_tid: %d incoming_tid: %d", exit_th->tid, new_active_th->tid);
+        log_inf("incoming_tid: %d", new_active_th->tid);
         queue_enq(active_q, &new_active_th);
         thread_run(new_active_th);
     }
     log_dbg("end");
     return;
 }
+
 void MyThreadYield(void)
 {
     log_inf("begin");

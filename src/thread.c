@@ -23,7 +23,7 @@
 thread_t* thread_create(thread_t *parent, void (*func)(void), void *args, unsigned int stack_size)
 {
     log_inf("begin child_tid: %d stack_size: %d", s_id_gen, stack_size);
-    thread_t *new_t = (thread_t *) malloc (sizeof(thread_t));
+    thread_t *new_t = calloc (1, sizeof(thread_t));
     
     if(new_t == NULL)
         return NULL;
@@ -37,9 +37,9 @@ thread_t* thread_create(thread_t *parent, void (*func)(void), void *args, unsign
     
     new_t->parent   = parent;
 
-    new_t->childq   = (queue_t *) malloc (sizeof(queue_t));
+    new_t->childq   = calloc (1, sizeof(queue_t));
     queue_init(new_t->childq);
-    new_t->blockq   = (queue_t *) malloc (sizeof(queue_t));
+    new_t->blockq   = calloc (1, sizeof(queue_t));
     queue_init(new_t->blockq);
     
     new_t->state    = THREAD_STATE_READY;
@@ -58,9 +58,12 @@ void thread_exit(thread_t *t)
 {
     log_inf("freeing resources");
     free(t->context.uc_stack.ss_sp);
+    queue_free(t->childq);
     free(t->childq);
+    queue_free(t->blockq);
     free(t->blockq);
     free(t);
+    t = NULL;
 }
 
 void thread_exit_update_parent(thread_t *t)

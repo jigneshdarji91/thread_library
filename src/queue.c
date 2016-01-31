@@ -29,7 +29,7 @@ void queue_init(struct queue_t *q)
 void queue_enq(queue_t *q, thread_t **t)
 {
     //log_dbg("begin tid: %d qsize:%d", t->tid, q->size);
-    thread_node_t *new_t = (thread_node_t *)malloc(sizeof(thread_node_t));
+    thread_node_t *new_t = calloc(1, sizeof(thread_node_t));
     new_t->t = *t;
     new_t->next = NULL;
     new_t->prev = q->tail;
@@ -152,13 +152,15 @@ void queue_free(queue_t *q)
     log_dbg("freeing queue memory");
     thread_node_t* itr = q->head;
     thread_node_t* temp = itr;
-    while(temp != NULL)
+    if(temp == NULL)
+        return;
+    while(temp->next != NULL)
     {
-        temp = temp->next;
-        free(itr->t->context.uc_stack.ss_sp);
-        free(itr->t);
-        itr->t = NULL;
-        free(itr);
         itr = temp;
+        free(itr);
+        temp = temp->next;
+        //free(itr->t->context.uc_stack.ss_sp);
+        //free(itr->t);
+        //itr->t = NULL;
     }
 }

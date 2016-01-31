@@ -27,7 +27,7 @@ void context_make(ucontext_t *t, void (*func)(void), void *args, unsigned int st
     getcontext(t);
     
     t->uc_link              = 0;
-    t->uc_stack.ss_sp       = malloc(stack_size);
+    t->uc_stack.ss_sp       = calloc(1, stack_size);
     t->uc_stack.ss_size     = stack_size;
     t->uc_stack.ss_flags    = 0;
     
