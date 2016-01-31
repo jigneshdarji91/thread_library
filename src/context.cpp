@@ -20,8 +20,9 @@
 #include "context.h"
 #include "debug.h"
 
+using namespace std;
 void 
-Context::make(ucontext_t& t, void (*func)(void), void *args, unsigned int stack_size)
+Context::Make(ucontext_t& t, void (*func)(void), void *args, unsigned int stack_size)
 {
     log_inf("creating a context with stack size: %d", stack_size);
     
@@ -37,7 +38,7 @@ Context::make(ucontext_t& t, void (*func)(void), void *args, unsigned int stack_
 }
 
 void 
-Context::swap(ucontext_t& prev, ucontext_t& next)
+Context::Swap(ucontext_t& prev, ucontext_t& next)
 {
     log_inf("begin");
     swapcontext(&prev, &next);
@@ -45,7 +46,7 @@ Context::swap(ucontext_t& prev, ucontext_t& next)
 }
 
 void 
-Context::set(ucontext_t& new_context)
+Context::Set(ucontext_t& new_context)
 {
     log_inf("begin");
     setcontext(&new_context);

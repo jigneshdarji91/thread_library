@@ -1,10 +1,10 @@
-CC = gcc
+CC = g++
 CFLAGS = -g -O0
 INCLUDE_DIR = include/
 TEST_DIR = test
 SRC_DIR = src
 LIB_DIR = lib
-FILES = $(SRC_DIR)/context.c $(SRC_DIR)/queue.c $(SRC_DIR)/thread.c $(SRC_DIR)/semaphore.c $(SRC_DIR)/mythread.c
+FILES = $(SRC_DIR)/context.cpp $(SRC_DIR)/thread.cpp $(SRC_DIR)/semaphore.cpp $(SRC_DIR)/mythread.cpp
 
 default: one ping passing tree 
 
@@ -21,11 +21,11 @@ tree: $(TEST_DIR)/tree.c $(FILES)
 	$(CC) $(CFLAGS) -o tree.o $(TEST_DIR)/tree.c $(FILES) -I$(INCLUDE_DIR) 
 
 library: 
-	$(CC) $(CFLAGS) -c $(SRC_DIR)/queue.c  -I$(INCLUDE_DIR) 
-	$(CC) $(CFLAGS) -c $(SRC_DIR)/context.c -I$(INCLUDE_DIR) 
-	$(CC) $(CFLAGS) -c $(SRC_DIR)/thread.c -I$(INCLUDE_DIR) 
-	$(CC) $(CFLAGS) -c $(SRC_DIR)/semaphore.c -I$(INCLUDE_DIR) 
-	$(CC) $(CFLAGS) -c $(SRC_DIR)/mythread.c -I$(INCLUDE_DIR) 
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/queue.cpp  -I$(INCLUDE_DIR) 
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/context.cpp -I$(INCLUDE_DIR) 
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/thread.cpp -I$(INCLUDE_DIR) 
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/semaphore.cpp -I$(INCLUDE_DIR) 
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/mythread.cpp -I$(INCLUDE_DIR) 
 	ar -cvq $(LIB_DIR)/libmythread.a queue.o context.o thread.o semaphore.o mythread.o
 	rm queue.o context.o thread.o semaphore.o mythread.o
 

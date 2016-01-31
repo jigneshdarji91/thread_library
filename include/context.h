@@ -25,9 +25,9 @@ using namespace std;
 
 class Context{
     public:
-        static void make(ucontext_t& /* t*/, void (*func)(void), void* /*args*/, unsigned int /* stack_size*/);
-        static void swap(ucontext_t& /* prev*/, ucontext_t& /* next*/);
-        static void set(ucontext_t& /*new_context*/);
+        static void Make(ucontext_t& /* t*/, void (*func)(void), void* /*args*/, unsigned int /* stack_size*/);
+        static void Swap(ucontext_t& /* prev*/, ucontext_t& /* next*/);
+        static void Set(ucontext_t& /*new_context*/);
 };
 
 #endif /*CONTEXT_H*/

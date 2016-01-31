@@ -19,17 +19,16 @@
 #ifndef THREAD_H
 #define THREAD_H
 
+#include <vector>
 #include "debug.h"
 #include "semaphore.h"
-#include <vector>
-#include <functional>
 #include "context.h"
 
 using namespace std;
 
 static unsigned int     sThreadIdGen = 1;
 typedef unsigned int    ThreadID;
-struct Thread;
+class Thread;
 typedef std::vector<Thread>   ThreadQueue;
 typedef enum ThreadState
 {
@@ -49,6 +48,7 @@ class Thread
         ThreadQueue             blockq;
 
     public:
+        Thread (unsigned int stack_size);
         Thread (Thread& parent,
                 void (*func)(void), 
                 void *args, 
@@ -60,17 +60,24 @@ class Thread
         int         Join(Thread& child);
         void        JoinAll();
         static void Switch(Thread& active, Thread& next);
-        void        Run(Thread& next);
+        static void Run(Thread& next);
         bool        IsChild(Thread& t);
         int         RemoveChild(Thread& t);
+        int         getTID();
+        Thread*     getParent();
+        ThreadState getState();
 
-        friend bool operator==(const Thread &t1, const Thread &t2);
+        friend bool operator==(const Thread &t1, const Thread &t2)
+        {
+            return t1.tid == t2.tid;
+        }
 };
-
+/* 
 bool operator==(const Thread &t1, const Thread &t2)
 {
     return t1.tid == t2.tid;
 }
+*/
 
 #endif /*THREAD_H*/
 

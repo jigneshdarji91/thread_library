@@ -19,6 +19,19 @@
 #include "thread.h"
 #include <malloc.h>
 #include <algorithm>
+#include <assert.h>
+
+Thread::Thread ( unsigned int stack_size)
+{
+    log_dbg("begin child_tid: %d stack_size: %d", sThreadIdGen, stack_size);
+
+    tid    =   sThreadIdGen++;
+    parent =   NULL;
+    state  =   THREAD_STATE_READY;
+    Context::Make(context, NULL, NULL, stack_size);
+
+    log_dbg("end");
+}
 
 Thread::Thread (Thread& parentTh,
         void (*func)(void), 
@@ -30,12 +43,10 @@ Thread::Thread (Thread& parentTh,
     tid    =   sThreadIdGen++;
     parent =   &parentTh;
     state  =   THREAD_STATE_READY;
-    Context::make(context, func, args, stack_size);
+    Context::Make(context, func, args, stack_size);
 
-    if(parent)
-    {
-        parent->childq.push_back(*this);
-    }
+    assert(parent);
+    parent->childq.push_back(*this);
 
     log_dbg("end");
 }
@@ -56,6 +67,12 @@ Thread::Exit()
     parent->RemoveChild(*this);
 }
 
+Thread* 
+Thread::getParent()
+{
+    return parent;
+}
+
 int 
 Thread::RemoveChild(Thread& t)
 {
@@ -68,14 +85,20 @@ Thread::RemoveChild(Thread& t)
     else
         log_err("tid: %d is NOT a child of tid: %d", t.tid, tid);
 
-    ThreadQueue::iterator itr2 = find(blockq.begin(), blockq.end(), t);
-    if(itr2 != childq.end())
+    if(!blockq.empty())
     {
-        blockq.erase(itr);
-        StatusUpdate();
+        ThreadQueue::iterator itr2 = find(blockq.begin(), blockq.end(), t);
+        if(itr2 != childq.end())
+        {
+            log_inf("itr2 tid: %d", itr2->getTID());
+            blockq.erase(itr2);
+            StatusUpdate();
+        }
+        else
+            log_inf("tid: %d is NOT blocking tid: %d", t.tid, tid);
     }
     else
-        log_inf("tid: %d is NOT a blocking tid: %d", t.tid, tid);
+        log_inf("blockq is empty");
 }
 
 bool
@@ -101,6 +124,18 @@ Thread::StatusUpdate()
         state   =   THREAD_STATE_READY;
 }
 
+int 
+Thread::getTID()
+{
+    return tid;
+}
+
+ThreadState 
+Thread::getState()
+{
+    return state;
+}
+
 void        
 Thread::Yield()
 {
@@ -122,11 +157,11 @@ Thread::JoinAll()
 void 
 Thread::Switch(Thread& active, Thread& next)
 {
-
+    Context::Swap(active.context, next.context);
 }
 
 void        
 Thread::Run(Thread& next)
 {
-
+    Context::Set(next.context);
 }
