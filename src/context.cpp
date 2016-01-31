@@ -20,32 +20,35 @@
 #include "context.h"
 #include "debug.h"
 
-void context_make(ucontext_t *t, void (*func)(void), void *args, unsigned int stack_size)
+void 
+Context::make(ucontext_t& t, void (*func)(void), void *args, unsigned int stack_size)
 {
     log_inf("creating a context with stack size: %d", stack_size);
     
-    getcontext(t);
+    getcontext(&t);
     
-    t->uc_link              = 0;
-    t->uc_stack.ss_sp       = malloc(stack_size);
-    t->uc_stack.ss_size     = stack_size;
-    t->uc_stack.ss_flags    = 0;
+    t.uc_link              = 0;
+    t.uc_stack.ss_sp       = malloc(stack_size);
+    t.uc_stack.ss_size     = stack_size;
+    t.uc_stack.ss_flags    = 0;
     
-    makecontext(t, func, 1, args);
+    makecontext(&t, func, 1, args);
     log_inf("end");
 }
 
-void context_swap(ucontext_t *prev, ucontext_t *next)
+void 
+Context::swap(ucontext_t& prev, ucontext_t& next)
 {
     log_inf("begin");
-    swapcontext(prev, next);
+    swapcontext(&prev, &next);
     log_inf("end");
 }
 
-void context_set(ucontext_t *new_context)
+void 
+Context::set(ucontext_t& new_context)
 {
     log_inf("begin");
-    setcontext(new_context);
+    setcontext(&new_context);
     log_inf("end");
 }
 
