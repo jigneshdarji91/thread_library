@@ -21,52 +21,56 @@
 
 #include "debug.h"
 #include "semaphore.h"
-#include "queue.h"
+#include <vector>
+#include <functional>
 #include "context.h"
 
-typedef enum    thread_state_t  thread_state_t;
-typedef struct  thread_t        thread_t;
-typedef struct  thread_node_t   thread_node_t;
+using namespace std;
 
-enum thread_state_t
+static unsigned int     sThreadIdGen = 1;
+typedef unsigned int    ThreadID;
+struct Thread;
+typedef std::vector<Thread>   ThreadQueue;
+typedef enum ThreadState
 {
     THREAD_STATE_READY = 0,   /*ready  */
     THREAD_STATE_RUNNING,     /*running*/
     THREAD_STATE_BLOCKED         /*waiting*/
-}; 
+}   ThreadState; 
 
-struct thread_t
+class Thread
 {
-    ucontext_t              context;
-    unsigned int            tid;
-    enum thread_state_t     state;
-    struct thread_t         *parent;
-    struct queue_t          *childq;
-    struct queue_t          *blockq;
-    struct semaphore_t      *sem;
+    private:
+        ucontext_t              context;
+        ThreadID                tid;
+        ThreadState             state;
+        Thread*                 parent;
+        ThreadQueue             childq;
+        ThreadQueue             blockq;
+
+    public:
+        Thread (Thread& parent,
+                void (*func)(void), 
+                void *args, 
+                unsigned int stack_size);
+        ~Thread();
+        void        Exit();
+        void        StatusUpdate();
+        void        Yield();
+        int         Join(Thread& child);
+        void        JoinAll();
+        static void Switch(Thread& active, Thread& next);
+        void        Run(Thread& next);
+        bool        IsChild(Thread& t);
+        int         RemoveChild(Thread& t);
+
+        friend bool operator==(const Thread &t1, const Thread &t2);
 };
 
-struct thread_node_t 
+bool operator==(const Thread &t1, const Thread &t2)
 {
-    struct thread_t         *t;
-    struct thread_node_t    *next;
-    struct thread_node_t    *prev;
-};
-
-static unsigned int s_id_gen = 1;
-
-thread_t*   thread_create(thread_t *parent,
-                            void (*func)(void), 
-                            void *args, 
-                            unsigned int stack_size);
-void        thread_exit_update_parent(thread_t* /*t*/);
-void        thread_exit(thread_t* /*t*/);
-void        thread_status_update(thread_t *t);
-void        thread_yield(thread_t* /*t*/);
-int         thread_join(thread_t *parent, thread_t **child);
-void        thread_join_all(thread_t *t);
-void        thread_switch(thread_t *active, thread_t *next);
-void        thread_run(thread_t *next);
+    return t1.tid == t2.tid;
+}
 
 #endif /*THREAD_H*/
 

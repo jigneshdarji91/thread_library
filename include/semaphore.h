@@ -19,7 +19,6 @@
 #define SEMAPHORE_H
 
 #include "debug.h"
-#include "queue.h"
 
 typedef struct semaphore_t semaphore_t;
 

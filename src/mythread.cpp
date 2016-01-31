@@ -3,15 +3,14 @@
 #include "mythread.h"
 #include "semaphore.h"
 #include "thread.h"
-#include "queue.h"
 #include <malloc.h>
 
-thread_t    *main_th;
-thread_t    *init_th;
+Thread      mainTh;
+Thread      initTh;
 
-queue_t     *active_q;
-queue_t     *ready_q;
-queue_t     *block_q;
+ThreadQueue     activeQ;
+ThreadQueue     readyQ;
+ThreadQueue     blockQ;
 
 const int STACK_SIZE    = 8000; //FIXME: stack size round off
 
@@ -21,19 +20,11 @@ const int FAILURE       = -1;
 void MyThreadInit(void(*start_funct)(void *), void *args)
 {
     log_inf("begin");
-    init_th = thread_create(NULL, NULL, NULL, STACK_SIZE);
-    main_th = thread_create(init_th, (void*)start_funct, args, STACK_SIZE);
+    initTh = Thread(NULL, NULL, NULL, STACK_SIZE);
+    mainTh = Thread(initTh, (void*)start_funct, args, STACK_SIZE);
 
-    active_q    = (queue_t *) malloc (sizeof(queue_t));
-    ready_q     = (queue_t *) malloc (sizeof(queue_t));
-    block_q     = (queue_t *) malloc (sizeof(queue_t));
-
-    queue_init(active_q);
-    queue_init(ready_q);
-    queue_init(block_q);
-
-    queue_enq(active_q, &main_th);
-    thread_switch(init_th, main_th); 
+    activeQ.push_back(mainTh);
+    Thread::Switch(initTh, mainTh);
     log_inf("end");
 }
 

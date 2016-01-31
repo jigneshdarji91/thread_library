@@ -17,152 +17,116 @@
  */
 
 #include "thread.h"
-#include "queue.h"
 #include <malloc.h>
+#include <algorithm>
 
-thread_t* thread_create(thread_t *parent, void (*func)(void), void *args, unsigned int stack_size)
+Thread::Thread (Thread& parentTh,
+        void (*func)(void), 
+        void *args, 
+        unsigned int stack_size)
 {
-    log_inf("begin child_tid: %d stack_size: %d", s_id_gen, stack_size);
-    thread_t *new_t = (thread_t *) malloc (sizeof(thread_t));
-    
-    if(new_t == NULL)
-        return NULL;
-    context_make(&new_t->context, 
-                    func, 
-                    args,
-                    stack_size);
-    
-    new_t->tid      = s_id_gen;
-    s_id_gen++;
-    
-    new_t->parent   = parent;
+    log_dbg("begin child_tid: %d stack_size: %d", sThreadIdGen, stack_size);
 
-    new_t->childq   = (queue_t *) malloc (sizeof(queue_t));
-    queue_init(new_t->childq);
-    new_t->blockq   = (queue_t *) malloc (sizeof(queue_t));
-    queue_init(new_t->blockq);
-    
-    new_t->state    = THREAD_STATE_READY;
-    new_t->sem      = NULL;
+    tid    =   sThreadIdGen++;
+    parent =   &parentTh;
+    state  =   THREAD_STATE_READY;
+    Context::make(context, func, args, stack_size);
 
-    if(parent != NULL && parent->tid > 0)
+    if(parent)
     {
-        queue_enq(parent->childq, &new_t);
+        parent->childq.push_back(*this);
     }
 
-    log_inf("end");
-    return new_t;
+    log_dbg("end");
 }
 
-void thread_exit(thread_t *t)
+Thread::~Thread()
 {
-    log_inf("freeing resources");
-    free(t->context.uc_stack.ss_sp);
-    free(t->childq);
-    free(t->blockq);
-    free(t);
+
 }
 
-void thread_exit_update_parent(thread_t *t)
+void        
+Thread::Exit()
 {
-    log_inf("begin tid:%d", t->tid);   
-    if(t == NULL)
-        return;
+    log_dbg("exiting tid: %d", tid);
+    
+    if(!parent)
+        log_err("parent doesn't exist");
+    
+    parent->RemoveChild(*this);
+}
 
-    if(t->parent != NULL)
+int 
+Thread::RemoveChild(Thread& t)
+{
+    log_dbg("removing tid: %d from parent: %d", t.tid, tid);
+    ThreadQueue::iterator itr = find(childq.begin(), childq.end(), t);
+    if(itr != childq.end())
     {
-        //Delete from the childq
-        if(queue_is_present(t->parent->childq, &t))
-        {
-            log_inf("removing from childq tid:%d parent_tid: %d", t->tid, t->parent->tid);
-            queue_del(t->parent->childq, &t);
-            thread_status_update(t->parent);
-        }
-        else
-            log_err("tid: %d not present in parent's childq", t->tid);
-
-        log_inf("printing parent tid: %d's blockq", t->parent->tid);
-        queue_print(t->parent->blockq);
-        //Delete from the blockq
-        if(queue_is_present(t->parent->blockq, &t))
-        {
-            log_inf(" removing from blockq tid:%d was blocking tid: %d", t->tid, t->parent->tid);
-            queue_del(t->parent->blockq, &t);
-
-            //Update parent status
-            thread_status_update(t->parent);
-        }
+        childq.erase(itr);
     }
     else
-    {
-        log_wrn("parent thread is dead");
-    }
-    
-    log_inf("end");
-}
+        log_err("tid: %d is NOT a child of tid: %d", t.tid, tid);
 
-void thread_status_update(thread_t *t)
-{
-    if(t->blockq->size > 0)
+    ThreadQueue::iterator itr2 = find(blockq.begin(), blockq.end(), t);
+    if(itr2 != childq.end())
     {
-        t->state = THREAD_STATE_BLOCKED;
-    }
-    else if(t->sem != NULL) //TODO: can thread only wait on one sem?
-    {
-        t->state = THREAD_STATE_BLOCKED;
+        blockq.erase(itr);
+        StatusUpdate();
     }
     else
+        log_inf("tid: %d is NOT a blocking tid: %d", t.tid, tid);
+}
+
+bool
+Thread::IsChild(Thread& t)
+{
+    bool isChild = false;
+    ThreadQueue::iterator itr = find(childq.begin(), childq.end(), t);
+    if(itr != childq.end())
     {
-        t->state = THREAD_STATE_READY;
+        isChild = true;
     }
-    log_dbg("tid: %d state:%d", t->tid, t->state);
+    log_dbg("parent: %d child: %d isChild: %d", tid, t.tid, isChild);
+    return isChild;
 }
 
-void thread_yield(thread_t *t)
+void        
+Thread::StatusUpdate()
 {
-    log_inf("begin tid:%d", t->tid);   
-    log_inf("end");   
+    //TODO: state change when waiting on semaphore
+    if(blockq.size() > 0) 
+        state   =   THREAD_STATE_BLOCKED;
+    else
+        state   =   THREAD_STATE_READY;
 }
 
-int thread_join(thread_t *parent, thread_t **child)
+void        
+Thread::Yield()
 {
-    if(parent == NULL || *child == NULL)
-    {
-        log_err("NULL threads being sent");
-        return -1;
-    }
-    //functionality for moving the active thread from running to blocking queue should be present in MyThread
-    log_inf("parent: %d child: %d", parent->tid, (*child)->tid);
-    queue_enq(parent->blockq, child);
-    parent->state = THREAD_STATE_BLOCKED; 
-    return 0;
+    log_dbg("");
 }
 
-void thread_join_all(thread_t *t)
+int         
+Thread::Join(Thread& child)
 {
-    //functionality for moving the active thread from running to blocking queue should be present in MyThread
-    
-    log_inf("begin tid: %d", t->tid);
-    thread_node_t* temp = t->childq->head;
-    while(temp != NULL)
-    {
-        queue_enq(t->blockq, &temp->t);
-        temp = temp->next;
-    }
-    t->state = THREAD_STATE_BLOCKED; 
-    log_inf("end");
+
 }
 
-void thread_switch(thread_t *active, thread_t *next)
+void        
+Thread::JoinAll()
 {
-    log_inf("begin active_tid: %d next_tid: %d", active->tid, next->tid);
-    context_swap(&active->context, &next->context);
-    log_inf("end");
+
 }
 
-void thread_run(thread_t *next)
+void 
+Thread::Switch(Thread& active, Thread& next)
 {
-    log_inf("begin next_tid: %d", next->tid);
-    context_set(&next->context);
-    log_inf("end");
+
+}
+
+void        
+Thread::Run(Thread& next)
+{
+
 }
