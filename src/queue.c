@@ -44,14 +44,14 @@ void queue_enq(queue_t *q, thread_t **t)
     }
     q->tail = new_t;
     q->size++;
-    queue_print(q);
+    //queue_print(q);
     //log_dbg("end");
 }
 
 void    queue_deq(queue_t *q, thread_t **t)
 {
     log_dbg("begin size:%d", q->size);
-    queue_print(q);
+    //queue_print(q);
     if(q->size < 1)
     {
         log_wrn("Queue is empty. End.");
@@ -72,7 +72,7 @@ void    queue_deq(queue_t *q, thread_t **t)
         q->tail = NULL;
     }
     //q->head->prev = NULL;
-    free(temp);
+    //free(temp);
     q->size--;
     log_dbg("end tid: %d", (*t)->tid);
 }
@@ -157,7 +157,7 @@ void queue_free(queue_t *q)
     while(temp->next != NULL)
     {
         itr = temp;
-        free(itr);
+        //free(itr);
         temp = temp->next;
         //free(itr->t->context.uc_stack.ss_sp);
         //free(itr->t);

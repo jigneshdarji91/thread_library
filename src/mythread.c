@@ -169,6 +169,8 @@ int MyThreadJoin(MyThread thread)
         queue_enq(active_q, &new_active_th);
         thread_switch(exit_th, new_active_th);
     }
+    else
+        thread_run(init_th);
     log_inf("end");
 
 }
@@ -186,6 +188,8 @@ void MyThreadJoinAll(void)
         queue_enq(active_q, &new_active_th);
         thread_switch(exit_th, new_active_th);
     }
+    else
+        thread_run(init_th);
     log_inf("end");
 }
 
