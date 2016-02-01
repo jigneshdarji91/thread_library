@@ -6,7 +6,7 @@ SRC_DIR = .
 LIB_DIR = .
 FILES = $(SRC_DIR)/context.c $(SRC_DIR)/queue.c $(SRC_DIR)/thread.c $(SRC_DIR)/semaphore.c $(SRC_DIR)/mythread.c
 
-default: library one ping passing tree 
+default: library
 
 one: 
 	$(CC) -o one.o $(TEST_DIR)/one.c $(LIB_DIR)/mythread.a
