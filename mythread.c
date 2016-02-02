@@ -157,9 +157,19 @@ void MyThreadYield(void)
 int MyThreadJoin(MyThread thread)
 {
     log_inf("begin");
+    if(thread == NULL)
+    {
+        log_err("NULL thread being passed.");
+        return -1;
+    }
     thread_t *exit_th = NULL, *parent_th = NULL, *new_active_th = NULL;
     queue_deq(active_q, &exit_th);
-    thread_join(exit_th, (thread_t **)&thread);
+    if(0 != thread_join(exit_th, (thread_t **)&thread))
+    {
+        log_err("thread is NOT a child");
+        queue_enq(active_q, &exit_th);
+        return -1;
+    }
     queue_enq(block_q, &exit_th);
     log_inf("exiting tid: %d", exit_th->tid);
     queue_deq(ready_q, &new_active_th);

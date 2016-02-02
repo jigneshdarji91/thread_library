@@ -8,7 +8,7 @@ int join = 0;
 void t2(void * who)
 {
   printf("t2 %d start\n", (int)who);
-  printf("t2 %d end\n", (int)who);
+  //printf("t2 %d end\n", (int)who);
   MyThreadExit();
 }
 

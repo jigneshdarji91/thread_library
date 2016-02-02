@@ -135,6 +135,11 @@ int thread_join(thread_t *parent, thread_t **child)
         return -1;
     }
     //functionality for moving the active thread from running to blocking queue should be present in MyThread
+    if(!queue_is_present(parent->childq, child))
+    {
+        log_err("tid: %d is NOT a child of tid: %d", (*child)->tid, parent->tid);
+        return -1;
+    }
     log_inf("parent: %d child: %d", parent->tid, (*child)->tid);
     queue_enq(parent->blockq, child);
     parent->state = THREAD_STATE_BLOCKED; 
@@ -144,7 +149,7 @@ int thread_join(thread_t *parent, thread_t **child)
 void thread_join_all(thread_t *t)
 {
     //functionality for moving the active thread from running to blocking queue should be present in MyThread
-    
+
     log_inf("begin tid: %d", t->tid);
     thread_node_t* temp = t->childq->head;
     while(temp != NULL)

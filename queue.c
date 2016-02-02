@@ -149,6 +149,7 @@ int queue_size(queue_t *q)
 
 void queue_free(queue_t *q)
 {
+    return;
     log_dbg("freeing queue memory");
     thread_node_t* itr = q->head;
     thread_node_t* temp = itr;
