@@ -49,6 +49,10 @@ thread_t* thread_create(thread_t *parent, void (*func)(void), void *args, unsign
     {
         queue_enq(parent->childq, &new_t);
     }
+    else
+    {
+        log_wrn("parent is NULL");
+    }
 
     log_inf("end");
     return new_t;

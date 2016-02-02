@@ -21,18 +21,20 @@
 #include "debug.h"
 #include "queue.h"
 
-typedef struct semaphore_t semaphore_t;
+typedef struct semaphore_t  semaphore_t;
+static unsigned int         s_sem_id_gen = 1;
 
 struct semaphore_t
 {
     int                 value;
+    unsigned int        sid;
     struct queue_t*     waiting_q;
     struct queue_t*     using_q;
 };
 
-semaphore_t     semaphore_init(int value);
-void            semaphore_signal(semaphore_t sem);
-void            semaphore_wait(semaphore_t sem);
-int             semaphore_destroy(semaphore_t sem);
+semaphore_t*    semaphore_init(int value);
+void            semaphore_signal(semaphore_t* sem);
+void            semaphore_wait(semaphore_t* sem);
+int             semaphore_destroy(semaphore_t* sem);
 
 #endif /*SEMAPHORE_H*/

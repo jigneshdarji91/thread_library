@@ -34,7 +34,8 @@ void MyThreadInit(void(*start_funct)(void *), void *args)
     queue_init(block_q);
 
     queue_enq(active_q, &main_th);
-    thread_switch(init_th, main_th); 
+    //thread_switch(init_th, main_th); 
+    thread_run(main_th); 
     thread_exit(init_th);
     thread_exit(main_th);
     log_inf("end");
@@ -55,6 +56,7 @@ MyThread MyThreadCreate (void(*start_funct)(void *), void *args)
         log_err("thread creation failed");
         return (MyThread *)0;
     }
+    queue_print(new_th->parent->childq);
     
     //add the thread to the ready queue
     queue_enq(ready_q, &new_th);
@@ -81,8 +83,8 @@ void MyThreadExit(void)
         log_dbg("main thread is exiting");
         if(queue_size(ready_q) > 0)
         {
-            log_dbg("main thread is exiting while other threads exit");
-            MyThreadJoinAll();
+            log_wrn("main thread is exiting while other threads exist");
+            MyThreadJoinAll(); //FIXME: this doesn't seem to work
         }
     }
     queue_deq(active_q, &exit_th);
@@ -207,24 +209,90 @@ void MyThreadJoinAll(void)
 // Create a semaphore
 MySemaphore MySemaphoreInit(int initialValue)
 {
+    log_inf("begin value: %d", initialValue);
+    if(0 > initialValue) 
+    {
+        log_err("initial value < 0");
+        return (void *)NULL;
+    }
 
+    return  (void*)semaphore_init(initialValue);
 }
 
 // Signal a semaphore
-void MySemaphoreSignal(MySemaphore sem)
+void MySemaphoreSignal(MySemaphore s)
 {
-
+    log_dbg("begin");
+    semaphore_t* sem = s;
+    if(NULL == sem)
+    {
+        log_err("NULL semaphore being signalled");
+        return;
+    }
+    semaphore_signal(s);
+    if(queue_size(sem->waiting_q) > 0)
+    {
+        thread_t *unblock_th    = NULL;
+        queue_deq(sem->waiting_q, &unblock_th);
+        unblock_th->state       =   THREAD_STATE_READY;
+        queue_del(block_q, &unblock_th);
+        queue_enq(ready_q, &unblock_th);
+        log_inf("unblocked tid: %d waiting on sid: %d", unblock_th->tid, sem->sid);
+    }
+    log_dbg("end");
 }
 
 // Wait on a semaphore
-void MySemaphoreWait(MySemaphore sem)
+void MySemaphoreWait(MySemaphore s)
 {
+    log_dbg("begin");
+    semaphore_t *sem = s;
+    if(NULL == sem)
+    {
+        log_err("NULL sem");
+        return;
+    }
 
+    if(sem->value> 0)
+        semaphore_wait(sem);
+    else
+    {
+        thread_t *active_th = NULL, *new_active_th = NULL;
+        queue_deq(active_q, &active_th);
+        active_th->state = THREAD_STATE_BLOCKED;
+        queue_enq(sem->waiting_q, &active_th);
+        queue_enq(block_q, &active_th);
+        log_inf("tid: %d shall not pass", active_th->tid);
+
+        queue_deq(ready_q, &new_active_th);
+        if(new_active_th != NULL && new_active_th->tid > 1)
+        {
+            queue_enq(active_q, &new_active_th);
+            thread_switch(active_th, new_active_th);
+        }
+        else
+            thread_run(init_th);
+    }
+    log_dbg("end");
 }
 
 // Destroy on a semaphore
-int MySemaphoreDestroy(MySemaphore sem)
+int MySemaphoreDestroy(MySemaphore s)
 {
+    log_dbg("begin");
+    semaphore_t *sem = s;
+    if(NULL == sem)
+    {
+        log_err("NULL sem");
+        return -1;
+    }
 
+    if(queue_size(sem->waiting_q) > 0)
+    {
+        log_err("threads waiting, shall not destroy");
+        return -1;
+    }
+    semaphore_destroy(sem);
+    log_dbg("end");
 }
 
