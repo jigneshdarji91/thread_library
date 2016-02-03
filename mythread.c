@@ -84,7 +84,7 @@ void MyThreadExit(void)
         if(queue_size(ready_q) > 0)
         {
             log_wrn("main thread is exiting while other threads exist");
-            MyThreadJoinAll(); //FIXME: this doesn't seem to work
+            MyThreadJoinAll();
         }
     }
     queue_deq(active_q, &exit_th);
