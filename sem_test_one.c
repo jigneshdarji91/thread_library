@@ -6,7 +6,6 @@ void t0(void * dummy)
   printf("t0 start\n");
   MySemaphore sem = MySemaphoreInit(1);
   MySemaphoreWait(sem);
-  printf("sem acquired\n");
   MySemaphoreSignal(sem);
   MyThreadExit();
 }

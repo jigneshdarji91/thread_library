@@ -14,7 +14,7 @@ queue_t     *active_q;
 queue_t     *ready_q;
 queue_t     *block_q;
 
-const int STACK_SIZE    = 8000; //FIXME: stack size round off
+const int STACK_SIZE    = 8*1024;
 
 const int SUCCESS       = 0;
 const int FAILURE       = -1;
