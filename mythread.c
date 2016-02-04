@@ -272,6 +272,7 @@ void MySemaphoreWait(MySemaphore s)
         }
         else
             thread_run(init_th);
+        semaphore_wait(sem);
     }
     log_dbg("end");
 }
